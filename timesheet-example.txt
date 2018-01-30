@@ -1,0 +1,4 @@
+07/01/2018      0,00       0:00 Leeg Leeg Leeg Leeg Leeg Leeg       0:00                                                 
+08/01/2018      0,00       0:00 Leeg Leeg Leeg Leeg Leeg Leeg       0:00 08:30 P01 E 17:40 P01 E                                     
+09/01/2018      0,00       0:00 Leeg Leeg Leeg Leeg Leeg Leeg       0:00 08:37 P01   17:28 P01                                       
+10/01/2018      0,00       0:00 Leeg Leeg Leeg Leeg Leeg Leeg       0:00 08:15 P01   16:27 P01                                       

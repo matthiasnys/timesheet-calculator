@@ -46,6 +46,13 @@ Next to that hours before 7h00 and after 18h04 are declined. So I added a `minTi
 ### Calculating your current day
 
 Some added feature is to calculate when you can leave to get on track with the timetracking.
+```bash
+node index.js 08:00
+```
+This will output
+```bash
+Currently 02:06 => -06:34 ETD:  16:40
+```
 
 ## Next steps
 

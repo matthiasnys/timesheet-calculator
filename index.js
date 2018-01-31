@@ -1,6 +1,7 @@
 var fs = require('fs')
 var fullDay = stringTimeToDecimal('08:40') // The amount to have at end of day.
-
+var minTime = '07:00'
+var maxTime = '18:04'
 
 function calculateTimeSheet() {
     
@@ -46,8 +47,8 @@ function parseLine(line) {
         var overtime = checkOvertime(duration)
         var ret = {
             'date': date,
-            'start': start,
-            'end': end,
+            'start': decimalTimeToString(Math.max(stringTimeToDecimal(minTime), stringTimeToDecimal(start))),
+            'end': decimalTimeToString(Math.min(stringTimeToDecimal(maxTime), stringTimeToDecimal(end))),
             'duration': duration,
             'overtime': overtime 
         }
@@ -59,8 +60,8 @@ function parseLine(line) {
 }
 
 function parseDay(start, end) {
-    // -> 08:00 16:30
-    var duration = stringTimeToDecimal(end) - stringTimeToDecimal(start)
+    // -> 08:00 16:30 + make sure not to go out of bounds! (mintime/maxtime)
+    var duration = Math.min(stringTimeToDecimal(maxTime), stringTimeToDecimal(end)) - Math.max(stringTimeToDecimal(minTime), stringTimeToDecimal(start))
     return duration
 }
 

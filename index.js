@@ -1,10 +1,12 @@
 var fs = require('fs')
 var fullDay = stringTimeToDecimal('08:40') // The amount to have at end of day.
-var minTime = '07:00'
-var maxTime = '18:04'
+var minTime = stringTimeToDecimal('07:00') // From When you can start
+var maxTime = stringTimeToDecimal('18:04') // Till when you have to stop
 
 function calculateTimeSheet() {
     
+    console.log("DATE          START    END      TOTAL   OVER     BILL") // Print a HEADER
+
     fs.readFile(__dirname + '/timesheet.txt', function (err, data) {
         if (err) throw err
     
@@ -14,11 +16,10 @@ function calculateTimeSheet() {
         {
             var parsedLine = parseLine(lines[i])
             if (parsedLine != null) {
-                console.log(parsedLine['date'] + " - " + parsedLine['start'] + ' - ' + parsedLine['end'] + " = " + decimalTimeToString(parsedLine['duration']) + " | " + decimalTimeToString(parsedLine['overtime']))
+                console.log(parsedLine['date'] + " - " + parsedLine['start'] + ' - ' + parsedLine['end'] + " = " + decimalTimeToString(parsedLine['duration']) + " |" + decimalTimeToString(parsedLine['overtime']) + " | " + decimalTimeToString(8.0 + parsedLine['overtime']) )
                 overtime = overtime + parsedLine['overtime']
             }
         }
-        
         console.log('Overtime for TimeSheet: ' + decimalTimeToString(overtime))
     })
 }
@@ -37,9 +38,8 @@ function calculateTime(timeString) {
 
 function parseLine(line) {
     var trimmedLine = line.trim()
-    if (trimmedLine.length <= 73) {
-        //console.log('empty/no time line, stop!')
-    } else if (trimmedLine.length <= 96) {
+
+    if (trimmedLine.length > 73 && trimmedLine.length <= 96) {
         var date = trimmedLine.substring(0, 10)
         var start = trimmedLine.substring(73, 78)
         var end = trimmedLine.substring(85, 90)
@@ -47,21 +47,19 @@ function parseLine(line) {
         var overtime = checkOvertime(duration)
         var ret = {
             'date': date,
-            'start': decimalTimeToString(Math.max(stringTimeToDecimal(minTime), stringTimeToDecimal(start))),
-            'end': decimalTimeToString(Math.min(stringTimeToDecimal(maxTime), stringTimeToDecimal(end))),
+            'start': decimalTimeToString(Math.max(minTime, stringTimeToDecimal(start))),
+            'end': decimalTimeToString(Math.min(maxTime, stringTimeToDecimal(end))),
             'duration': duration,
             'overtime': overtime 
         }
-        //console.log(date + " - " + start + ' - ' + end + " = " + decimalTimeToString(duration) + " | " + decimalTimeToString(overtime))
         return ret
     }
     return null
-    //console.log(trimmedLine)
 }
 
 function parseDay(start, end) {
     // -> 08:00 16:30 + make sure not to go out of bounds! (mintime/maxtime)
-    var duration = Math.min(stringTimeToDecimal(maxTime), stringTimeToDecimal(end)) - Math.max(stringTimeToDecimal(minTime), stringTimeToDecimal(start))
+    var duration = Math.min(maxTime, stringTimeToDecimal(end)) - Math.max(minTime, stringTimeToDecimal(start))
     return duration
 }
 

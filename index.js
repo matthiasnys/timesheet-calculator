@@ -21,6 +21,17 @@ function calculateTimeSheet() {
             }
         }
         console.log('Overtime for TimeSheet: ' + decimalTimeToString(overtime))
+        readAndCalculateTime()
+    })
+}
+
+function writeTodayTime(timeString) {
+    fs.writeFile(__dirname + '/today.txt', timeString)
+}
+
+function readAndCalculateTime() {
+    fs.readFile(__dirname + '/today.txt', function (err, data) {
+        calculateTime(data.toString())
     })
 }
 
@@ -32,6 +43,7 @@ function calculateTime(timeString) {
     var duration = parseDay(timeString, currentHourString)
     var overtime = checkOvertime(duration)
     var eta = stringTimeToDecimal(timeString) + fullDay
+
     console.log("Currently" + decimalTimeToString(duration) + " => " + decimalTimeToString(overtime) + " ETD: " + decimalTimeToString(eta))
 }
 
@@ -66,9 +78,12 @@ function parseDay(start, end) {
 function decimalTimeToString(decimalTime) {
     // -> 16,5 -> 16:30
     var absoluteDecimalTime = Math.abs(decimalTime)
+    if (absoluteDecimalTime < 0.001) {
+        return " 00:00"
+    }
     var hours = pad(parseInt(absoluteDecimalTime, 10), 2)
     var minutes = pad(Math.round((absoluteDecimalTime - hours) * 60.0), 2)
-
+    
     var minus = decimalTime < 0.0 ? "-" : " "
     return minus + hours + ":" + minutes
 }
@@ -97,5 +112,6 @@ var timeOrNot = process.argv[2]
 if (timeOrNot == null) {
     calculateTimeSheet()
 } else {
+    writeTodayTime(timeOrNot)
     calculateTime(timeOrNot)
 }

@@ -26,7 +26,9 @@ function calculateTimeSheet() {
 }
 
 function writeTodayTime(timeString) {
-    fs.writeFile(__dirname + '/today.txt', timeString)
+    fs.writeFile(__dirname + '/today.txt', timeString, function(err, result) {
+        if (err) console.log(err)
+    })
 }
 
 function readAndCalculateTime() {
